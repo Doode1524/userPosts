@@ -26,6 +26,14 @@ class PostsController < ApplicationController
 
   # PATCH/PUT /posts/1
   def update
+    # Remove all user_posts associated with this post
+    @post.user_posts.destroy_all
+    
+    # Add new user_posts based on the authorIds params and the passed in post.id
+    params[:authorIds].each do |user|
+      @post.user_posts.create(user_id: user, post_id: @post.id)
+    end
+
     if @post.update(post_params)
       render json: @post, include: [:users]
     else
